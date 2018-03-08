@@ -102,10 +102,6 @@ var init = function (options) {
             };
             flashProvider.configure(flashConf);
         }
-        var mediaSourceMediaProvider = require("./media-source-media-provider");
-        if (mediaSourceMediaProvider && mediaSourceMediaProvider.hasOwnProperty('available') && mediaSourceMediaProvider.available()) {
-            MediaProvider.MSE = mediaSourceMediaProvider;
-        }
         var websocketProvider = require("./websocket-media-provider");
         if (websocketProvider && websocketProvider.hasOwnProperty('available') && websocketProvider.available(audioContext)) {
             MediaProvider.WSPlayer = websocketProvider;
