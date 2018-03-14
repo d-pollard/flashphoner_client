@@ -26,6 +26,7 @@ function init_page() {
         }, 500);
 
     } else if (Browser.isChrome()) {
+        $('#mediaSource').hide();
         interval = setInterval(function() {
             chrome.runtime.sendMessage(extensionId, {type: "isInstalled"}, function (response) {
                 if (response) {
@@ -37,7 +38,6 @@ function init_page() {
                 }
             });
         }, 500);
-
     } else {
         $("#notify").modal('show');
         return false;
@@ -56,6 +56,7 @@ function onStarted(publishStream, previewStream) {
         $(this).prop('disabled', true);
         previewStream.stop();
     }).prop('disabled', false);
+    $('#mediaSource').prop('disabled', true);
 }
 
 function onStopped() {
@@ -66,6 +67,7 @@ function onStopped() {
             start();
         }
     }).prop('disabled', false);
+    $('#mediaSource').prop('disabled', false);
     unmuteInputs();
 }
 
@@ -107,10 +109,14 @@ function startStreaming(session) {
             width: parseInt($('#width').val()),
             height: parseInt($('#height').val()),
             frameRate: parseInt($('#fps').val()),
-            type: "screen"
         },
         audio: $("#useMic").prop('checked')
     };
+    if (Browser.isChrome()) {
+        constraints.video.type = "screen";
+    } else if (Browser.isFirefox()){
+        constraints.video.mediaSource = $('#mediaSource').val();
+    }
     session.createStream({
         name: streamName,
         display: localVideo,
@@ -180,9 +186,9 @@ function installExtension() {
         chrome.webstore.install();
     } else if (Browser.isFirefox()) {
         var params = {
-            "Flashphoner Screen Sharing": { URL: "../../dependencies/screen-sharing/firefox-extension/flashphoner_screen_sharing-0.0.9-an+fx.xpi",
+            "Flashphoner Screen Sharing": { URL: "../../dependencies/screen-sharing/firefox-extension/flashphoner_screen_sharing-0.0.10-fx.xpi",
                 IconURL: "../../dependencies/screen-sharing/firefox-extension/icon.png",
-                Hash: "sha1:96699c6536de455cdc5c7705f5b24fae28931605",
+                Hash: "sha1:d05783a5d8af8807aa427520f2e81a3fd23c2a14",
                 toString: function () { return this.URL; }
             }
         };
